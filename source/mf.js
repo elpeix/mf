@@ -19,6 +19,9 @@
 	//Version
 	MF.VERSION = '0.9';
 
+	//Connection Class
+	MF.Connection = MFConnectionJQuery;
+
 	/**
 	* Model Method
 	*/
@@ -137,7 +140,7 @@
 			var async = _options.async;
 			var callback = _options.callback;
 
-			var dataObj = new MFConnection(self.url);
+			var dataObj = new MF.Connection(self.url);
 
 			dataObj.init(async, function(rData){
 				self.content = rData;
@@ -195,7 +198,7 @@
 		//Remove
 		// Elimina l'element del servidor. No retorna res is ha anat bé.
 		function remove(callback, async){
-			var dataObj = new MFConnection(self.url);
+			var dataObj = new MF.Connection(self.url);
 			if (!async) async = true;
 
 			dataObj.remove(async, function(rData){
@@ -226,7 +229,7 @@
 			if(!self.id) type = 'post';
 			else type = 'put';
 
-			var dataObj = new MFConnection(url);
+			var dataObj = new MF.Connection(url);
 			dataObj[type](JSON.stringify(self.content), function(rData){
 				if (rData.status > 299) {
 					//Cagada TOTAL!
@@ -413,7 +416,7 @@
       
 			reset();
 			if (!self.url) urlError();
-			var dataObj = new MFConnection(self.url + (params? '?' + params : ''));
+			var dataObj = new MF.Connection(self.url + (params? '?' + params : ''));
       
 			dataObj.init(async, function(rData){
 				if (rData.status > 299){
