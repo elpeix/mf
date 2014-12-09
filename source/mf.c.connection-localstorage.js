@@ -1,5 +1,5 @@
 /**
- * Class Name: MF Storage
+ * MF Connection Manager - LocalStorage
  * 
  * Uses LocalStorage
  * 
@@ -8,44 +8,44 @@
  *
  */
 
-function MFStorage(uid){
+function MFConnectionLocalStorage(uid){
 	t = this;
-	
-	t.init 			= init;
-	t.destroy		= destroy;
-	t.get			= get;
-	t.post			= post;
-	t.put			= put;
-	t.remove		= remove;
-	
+
+	t.init      = init;
+	t.destroy   = destroy;
+	t.get     = get;
+	t.post      = post;
+	t.put     = put;
+	t.remove    = remove;
+
 	//Local
-	var dataType	= 'json';
+	var dataType  = 'json';
 	var data;
-	var storageSuported = ( typeof Storage != 'undefined' );
+	var storageSupported = ( typeof Storage != 'undefined' );
 
 	//Public Methods
 	function init(callback){
+		//Checks suport
+		if (!_isStorageSupported(callback)) return false;
+		
 		get(callback);
 	};
-	function destroy(){
-		//Comprove suport
-		if (!storageSuported) {
-			callback(_error(300));
-			return false;
-		}
 
-		localStorage.clear();		//Clear localStorage
+	function destroy(){
+		//Checks suport
+		if (!_isStorageSupported(callback)) return false;
+
+		localStorage.clear();   //Clear localStorage
 		callback({
 			status: 202
 		});
 		return;
 	};
+
 	function get(callback){
-		//Comprove suport and uid is defined
-		if (!storageSuported) {
-			callback(_error(300));
-			return false;
-		}
+		//Checks suport and uid is defined
+		if (!_isStorageSupported(callback)) return false;
+
 		if (!uid) {
 			callback(_error(400));
 			return false;
@@ -56,7 +56,6 @@ function MFStorage(uid){
 		if (!value) {
 			var reg = new RegExp('^' + uid);
 			var arr = findPropertyNameByRegex(localStorage, reg);
-
 			var arrLength = arr.length
 
 			if (!arrLength) callback(_error(404));
@@ -64,27 +63,22 @@ function MFStorage(uid){
 				count : arrLength,
 				items : []
 			}
-			for (var i = 0; i < arrLength; i++) {
+			for (var i = 0; i < arrLength; i++)
 				obj.items.push(_parseData(localStorage[arr[i]]));
-			};
-
 		}
-		else {
+		else
 			obj = _parseData(localStorage[uid]);
-		}
 
-		if (callback && typeof callback === 'function'){
+		if (callback && typeof callback === 'function')
 			callback(obj);
-		}
+
 		return;
-		
 	};
+
 	function post(message, callback){
-		//Comprove suport and uid is defined
-		if (!storageSuported) {
-			callback(_error(300));
-			return false;
-		}
+		//Checks suport and uid is defined
+		if (!_isStorageSupported(callback)) return false;
+
 		if (!uid) {
 			callback(_error(400));
 			return false;
@@ -97,12 +91,11 @@ function MFStorage(uid){
 		callback(message);
 		return;
 	};
+
 	function put(message, callback){
-		//Comprove suport and uid is defined
-		if (!storageSuported) {
-			callback(_error(300));
-			return false;
-		}
+		//Checks suport and uid is defined
+		if (!_isStorageSupported(callback)) return false;
+
 		if (!uid) {
 			callback(_error(400));
 			return false;
@@ -112,12 +105,11 @@ function MFStorage(uid){
 		callback(message);
 		return;
 	};
+
 	function remove(callback){
-		//Comprove suport and uid is defined
-		if (!storageSuported) {
-			callback(_error(300));
-			return false;
-		}
+		//Checks suport and uid is defined
+		if (!_isStorageSupported(callback)) return false;
+
 		if (!uid) {
 			callback(_error(400));
 			return false;
@@ -126,7 +118,7 @@ function MFStorage(uid){
 		delete localStorage[uid]; //Delete item
 		return {status: 202};
 	};
-	
+  
 	//Private Methods
 	function _stringifyData(obj){
 		switch (dataType) {
@@ -138,21 +130,27 @@ function MFStorage(uid){
 	};
 	function _parseData(str){
 		switch (dataType) {
-			case 'json':
-				if (str) {
-					return JSON.parse(str);
-				}
-				return _error(404)
-				
-			default : 
-				return _error(403);
+		case 'json':
+			if (str)
+				return JSON.parse(str);
+			return _error(404)
+		default : 
+			return _error(403);
 		}
+	};
+	function _isStorageSupported(callback){
+		if (!storageSupported) {
+			callback(_error(300));
+			return false;
+		}
+		return true;
 	};
 	function _error(code){
 		var message = "";
 		switch (code) {
 			case 300:
-				message = "LocalStorage is not supported"
+				message = "LocalStorage is not supported";
+				break;
 			case 403:
 				message = "Not implemented";
 				break;
@@ -161,6 +159,7 @@ function MFStorage(uid){
 				break;
 			case 500:
 				message = "Internal error";
+				break;
 			default:
 				message = "Bad request";
 				break;
@@ -180,14 +179,14 @@ function MFStorage(uid){
 
 	// Generate four random hex digits.
 	function S4() {
-	   return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+		return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
 	};
 	function uniqueIden() {
-	   return (S4()+S4()+S4());
+		return (S4()+S4()+S4());
 	};
 
 	// Generate a pseudo-GUID by concatenating random hexadecimal.
 	function guid() {
-	   return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+		return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 	};
 };
