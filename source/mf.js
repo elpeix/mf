@@ -81,7 +81,7 @@
 				self.id = self.url.match(/\d*(\/?)$/)[0];
 			if (isNaN(self.id))
 				self.id = self.url.match(/\d*$/)[0];
-			}
+
 			self.url = self.url? self.url.replace('//', '/') : '';
 
 			//If is necessary transform URLs
@@ -146,9 +146,8 @@
 				self.content = rData;
 				self.id = rData.id;
 				self.lastSync = new Date();
-				if (callback && typeof callback === 'function') {
+				if (callback && typeof callback === 'function')
 					callback(self);
-				}
 			});
 		};
 
@@ -230,7 +229,7 @@
 			else type = 'put';
 
 			var dataObj = new MF.Connection(url);
-			dataObj[type](JSON.stringify(self.content), function(rData){
+			dataObj[type](async, JSON.stringify(self.content), function(rData){
 				if (rData.status > 299) {
 					//Cagada TOTAL!
 					if (callback && typeof callback === 'function')
@@ -380,8 +379,8 @@
 				identifier : 0,
 				async : true,
 				params: '',
-					success: function(){},
-					error: function(){}
+				success: function(){},
+				error: function(){}
 			};
 			var _options = $.extend(_defaults, _options || {});
 	      
