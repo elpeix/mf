@@ -1,29 +1,29 @@
 /**
- * MF Connection Manager
+ * MF Connection Manager - JQuery
  * 
  * @author Francesc Requesens
  * @version 1.5 - 2014-10-18
  * 
  */
-function MFConnection(externalUrl){
+function MFConnectionJQuery(externalUrl){
 	t = this;
 	
-	t.init 			= init;
-	t.destroy		= destroy;
-	t.abort			= abort;
-	t.setUrl		= setUrl;
-	t.setDataType	= setDataType;
-	t.getData		= getData;
-	t.getText		= getText;
-	t.post			= post;
-	t.postFormData	= postFormData;
-	t.put			= put;
-	t.remove		= remove;
-	t.checkStatus 	= checkStatus;
+	t.init         = init;
+	t.destroy      = destroy;
+	t.abort        = abort;
+	t.setUrl       = setUrl;
+	t.setDataType  = setDataType;
+	t.getData      = getData;
+	t.getText      = getText;
+	t.post         = post;
+	t.postFormData = postFormData;
+	t.put          = put;
+	t.remove       = remove;
+	t.checkStatus  = checkStatus;
 	
 	//Local
-	var url 		= ''; 
-	var dataType	= '';  //xml, text, json
+	var url = ''; 
+	var dataType = '';  //xml, text, json
 	var request;
 	var data;
 	
@@ -76,11 +76,9 @@ function MFConnection(externalUrl){
 	};
 	function get(async, callback){
 		if (!arguments.length) var async = true;
-		else{
-			if (typeof(arguments[0]) == 'function'){
-				var callback = async;
-				async = true;
-			}
+		else if (typeof(arguments[0]) == 'function'){
+			var callback = async;
+			async = true;
 		}
 		request = $.ajax({
 			type	: 'GET',
@@ -92,43 +90,40 @@ function MFConnection(externalUrl){
 	};
 	function getText(async, callback){
 		if (!arguments.length) var async = true;
-		else{
-			if (typeof(arguments[0]) == 'function'){
-				var callback = async;
-				async = true;
-			}
+		else if (typeof(arguments[0]) == 'function'){
+			var callback = async;
+			async = true;
 		}
 		if (!url) setUrl(externalUrl);
 		
 		var handleStateChange = function () {
 			switch (xhr.readyState) {
 				case 0 : // UNINITIALIZED
-		      	case 1 : // LOADING
-		      	case 2 : // LOADED
-		      	case 3 : // INTERACTIVE
-		      		break;
-		      	case 4 : // COMPLETED
-		      		if (callback)
-		      			callback({
-		      				status : xhr.status, 
-		      				responseText : xhr.responseText
-		      			});
-		      		break;
-		      	default: 
-		      		if (callback)
-		      			callback({
-		      				status: 500, 
-		      				responseText : 'Error'
-		      			});
-		      		break;
-		   }
+				case 1 : // LOADING
+				case 2 : // LOADED
+				case 3 : // INTERACTIVE
+					break;
+				case 4 : // COMPLETED
+					if (callback)
+						callback({
+							status : xhr.status, 
+							responseText : xhr.responseText
+						});
+					break;
+				default: 
+					if (callback)
+						callback({
+							status: 500, 
+							responseText : 'Error'
+						});
+					break;
+			}
 		};
 		
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = handleStateChange;
 		xhr.open('GET', url, async);
 		xhr.send(null);
-		
 	};
 	function post(message, async, callback){
 		if (!arguments.length) return false;
@@ -168,13 +163,13 @@ function MFConnection(externalUrl){
 		var handleStateChange = function () {
 			switch (xhr.readyState) {
 				case 0 : // UNINITIALIZED
-		      	case 1 : // LOADING
-		      	case 2 : // LOADED
-		      	case 3 : // INTERACTIVE
-		      		break;
-		      	case 4 : // COMPLETED
-		      		if (callback){
-		      			var rData = {};
+				case 1 : // LOADING
+				case 2 : // LOADED
+				case 3 : // INTERACTIVE
+					break;
+				case 4 : // COMPLETED
+					if (callback){
+						var rData = {};
 						if (xhr.status > 299) {
 							rData.status = xhr.status;
 							rData.responseText = xhr.responseText;
@@ -182,19 +177,18 @@ function MFConnection(externalUrl){
 						else 
 							rData = $.parseJSON(xhr.responseText);
 						callback(_result(rData));
-		      		}
-		      			
-		      		break;
-		      	default: 
-		      		if (callback){
-		      			callback({
-		      				status: 500, 
-		      				responseText : 'Error'
-		      			});
-		      			callback(_result(rData));
-		      		}
-		      			
-		      		break;
+					}
+						
+					break;
+				default: 
+					if (callback){
+						callback({
+							status: 500, 
+							responseText : 'Error'
+						});
+						callback(_result(rData));
+					}
+					break;
 		   }
 		};
 		
@@ -205,7 +199,7 @@ function MFConnection(externalUrl){
 		xhr.setRequestHeader('Accept', 'application/json');
 		xhr.setRequestHeader('contentType', 'application/json');
 		xhr.send(formData);
-		
+
 	};
 	function put(message, async, callback){
 		if (!arguments.length) return false;
@@ -218,11 +212,11 @@ function MFConnection(externalUrl){
 		}
 		if (!url) setUrl(externalUrl);
 		request = $.ajax({
-			type	: 'PUT',
-			async 	: async,
-			data	: message,
-			url		: url,
-			error 	: function(rData){if (callback)callback(_result(rData));},
+			type : 'PUT',
+			async : async,
+			data : message,
+			url : url,
+			error : function(rData){if (callback)callback(_result(rData));},
 			success : function(rData){if (callback)callback(_result(rData));}
 		});
 	};
@@ -243,11 +237,11 @@ function MFConnection(externalUrl){
 		}
 		if (!url) setUrl(externalUrl);
 		request = $.ajax({
-			type	: 'DELETE',
-			async 	: async,
-			data	: message,
-			url		: url,
-			error 	: function(rData){if (callback)callback(_result(rData));},
+			type : 'DELETE',
+			async : async,
+			data : message,
+			url	 : url,
+			error  : function(rData){if (callback)callback(_result(rData));},
 			success : function(rData){if (callback)callback(_result(rData));}
 		});
 	};
@@ -259,8 +253,8 @@ function MFConnection(externalUrl){
 			return false;
 		}
 		return true;
-	}
-	
+	};
+
 	//Private Methods
 	function _result(rData){
 		var dataTmp;
@@ -275,11 +269,10 @@ function MFConnection(externalUrl){
 			catch (err){
 				dataTmp = err;
 			}
-			
 		}
 		return dataTmp;
 	};
-	
+
 	function _dataJSON(rData){
 		var dataTmp;
 		switch (rData.status){
